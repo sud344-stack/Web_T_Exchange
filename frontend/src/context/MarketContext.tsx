@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 type Prices = Record<string, number>;
@@ -60,6 +61,7 @@ const MarketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =
   );
 };
 
-export const useMarket = () => useContext(MarketContext);
+const useMarket = () => useContext(MarketContext);
+export { useMarket };
 
 export { MarketProvider };

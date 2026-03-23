@@ -24,15 +24,7 @@ export const Dashboard: React.FC = () => {
 
   const availableAssets = ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'POL', 'XMR', 'ZEC', 'PEPE'];
 
-  useEffect(() => {
-    if (userId) {
-      fetchPortfolio(userId);
-      const interval = setInterval(() => fetchPortfolio(userId), 2000);
-      return () => clearInterval(interval);
-    }
-  }, [userId]);
-
-  async function fetchPortfolio(id: string) {
+  const fetchPortfolio = async (id: string) => {
     try {
       const res = await axios.get(`/api/users/${id}/portfolio`);
       setPortfolio(res.data);
@@ -40,6 +32,17 @@ export const Dashboard: React.FC = () => {
       console.error("Failed to fetch portfolio", e);
     }
   };
+
+  useEffect(() => {
+    if (!userId) return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchPortfolio(userId);
+    const interval = setInterval(() => fetchPortfolio(userId), 2000);
+    return () => clearInterval(interval);
+  }, [userId]);
+
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +82,7 @@ export const Dashboard: React.FC = () => {
       if(orderType === 'LIMIT') setOrderPrice('');
       fetchPortfolio(userId);
     } catch (e: unknown) {
-      alert(`Order failed: ${((e as any).response?.data?.error) || (e as any).message}`);
+      alert(`Order failed: ${((e as {response?: {data?: {error?: string}}}).response?.data?.error) || ((e as {message?: string}).message)}`);
     }
   };
 
