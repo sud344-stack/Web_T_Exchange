@@ -8,7 +8,7 @@ interface MarketContextType {
 
 const MarketContext = createContext<MarketContextType>({ prices: {} });
 
-export const MarketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const MarketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [prices, setPrices] = useState<Prices>({});
 
   useEffect(() => {
@@ -61,3 +61,5 @@ export const MarketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 };
 
 export const useMarket = () => useContext(MarketContext);
+
+export { MarketProvider };
