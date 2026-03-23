@@ -1,7 +1,7 @@
 services:
   - type: web
     name: cryptosim-web
-    env: rust
+    env: rust # Trigger blueprint
     buildCommand: "cd frontend && npm install && npm run build && cd ../backend && cargo build --release"
     startCommand: "cd backend && cargo run --release"
     envVars:

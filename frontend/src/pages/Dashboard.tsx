@@ -32,7 +32,7 @@ export const Dashboard: React.FC = () => {
     }
   }, [userId]);
 
-  const fetchPortfolio = async (id: string) => {
+  async function fetchPortfolio(id: string) {
     try {
       const res = await axios.get(`/api/users/${id}/portfolio`);
       setPortfolio(res.data);
@@ -78,8 +78,8 @@ export const Dashboard: React.FC = () => {
       setOrderQuantity('');
       if(orderType === 'LIMIT') setOrderPrice('');
       fetchPortfolio(userId);
-    } catch (e: any) {
-      alert(`Order failed: ${e.response?.data?.error || e.message}`);
+    } catch (e: unknown) {
+      alert(`Order failed: ${((e as any).response?.data?.error) || (e as any).message}`);
     }
   };
 
