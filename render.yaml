@@ -3,7 +3,7 @@ services:
     name: cryptosim-web
     env: rust # Trigger blueprint
     buildCommand: "cd frontend && npm install && npm run build && cd ../backend && cargo build --release"
-    startCommand: "cd backend && cargo run --release"
+    startCommand: "cd backend && ./target/release/backend"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
