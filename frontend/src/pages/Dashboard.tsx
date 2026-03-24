@@ -1,28 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { useMarket } from '../context/MarketContext';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { useMarketHook } from '../context/MarketContext';
 
 interface PortfolioItem {
-  id: string;
-  user_id: string;
   asset: string;
   balance: number;
 }
 
-export const Dashboard: React.FC = () => {
-  const { prices } = useMarket();
-  const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
-  const [userId, setUserId] = useState<string | null>(localStorage.getItem('userId'));
-  const [username, setUsername] = useState<string>('');
-  
-  // New Order State
-  const [orderAsset, setOrderAsset] = useState('BTC');
-  const [orderSide, setOrderSide] = useState('BUY');
-  const [orderType, setOrderType] = useState('MARKET');
-  const [orderQuantity, setOrderQuantity] = useState('');
-  const [orderPrice, setOrderPrice] = useState('');
+const availableAssets = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'POL', 'XMR', 'ZEC', 'PEPE'];
 
-  const availableAssets = ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'POL', 'XMR', 'ZEC', 'PEPE'];
+export const Dashboard: React.FC = () => {
+  const [username, setUsername] = useState('');
+  const [userId, setUserId] = useState<string | null>(localStorage.getItem('userId'));
+  const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
+  const { prices } = useMarketHook();
+
+  const [orderSide, setOrderSide] = useState('BUY');
+  const [orderAsset, setOrderAsset] = useState('BTC');
+  const [orderType, setOrderType] = useState('MARKET');
+  const [orderPrice, setOrderPrice] = useState('');
+  const [orderQuantity, setOrderQuantity] = useState('');
+
+  const fetchPortfolio = useCallback(async (id: string) => {
+    try {
+      const res = await axios.get(`/api/users/${id}/portfolio`);
+      setPortfolio(res.data);
+    } catch (e) {
+      console.error("Failed to fetch portfolio", e);
+    }
+  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -30,55 +36,47 @@ export const Dashboard: React.FC = () => {
       const interval = setInterval(() => fetchPortfolio(userId), 2000);
       return () => clearInterval(interval);
     }
-  }, [userId]);
-
-  async function fetchPortfolio(id: string) {
-    try {
-      const res = await axios.get(`/api/users/${id}/portfolio`);
-      setPortfolio(res.data);
-    } catch (e) {
-      console.error("Failed to fetch portfolio", e);
-    }
-  };
+  }, [userId, fetchPortfolio]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!username) return;
     try {
       const res = await axios.post('/api/users', { username });
       const id = res.data.id;
-      localStorage.setItem('userId', id);
       setUserId(id);
-      fetchPortfolio(id);
+      localStorage.setItem('userId', id);
     } catch (e) {
       console.error("Login failed", e);
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('userId');
     setUserId(null);
+    localStorage.removeItem('userId');
     setPortfolio([]);
   };
 
   const submitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userId || !orderQuantity) return;
+    if (!userId) return;
+
+    const payload = {
+      user_id: userId,
+      asset: orderAsset,
+      side: orderSide,
+      order_type: orderType,
+      price: orderType === 'MARKET' ? 0 : parseFloat(orderPrice),
+      quantity: parseFloat(orderQuantity)
+    };
 
     try {
-      await axios.post('/api/orders', {
-        user_id: userId,
-        asset: orderAsset,
-        side: orderSide,
-        order_type: orderType,
-        price: orderType === 'MARKET' ? (prices[`${orderAsset}USDT`] || 0) : parseFloat(orderPrice),
-        quantity: parseFloat(orderQuantity),
-      });
+      await axios.post('/api/orders', payload);
       alert('Order placed successfully!');
       setOrderQuantity('');
       if(orderType === 'LIMIT') setOrderPrice('');
       fetchPortfolio(userId);
     } catch (e: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       alert(`Order failed: ${((e as any).response?.data?.error) || (e as any).message}`);
     }
   };

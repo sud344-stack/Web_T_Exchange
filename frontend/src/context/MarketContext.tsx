@@ -60,6 +60,7 @@ const MarketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =
   );
 };
 
-export const useMarket = () => useContext(MarketContext);
+const useMarketHook = () => useContext(MarketContext);
 
 export { MarketProvider };
+export { useMarketHook };
