@@ -57,7 +57,7 @@ async fn main() {
         .allow_headers(Any);
 
     // Setup router
-    let app = Router::new().nest_service("/", tower_http::services::ServeDir::new("../frontend/dist"))
+    let app = Router::new().fallback_service( tower_http::services::ServeDir::new("../frontend/dist"))
         .route("/health", get(|| async { "OK" }))
         .route("/ws", get(routes::ws::ws_handler))
         .route("/api/users", post(routes::api::create_user))
