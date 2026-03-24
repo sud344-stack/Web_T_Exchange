@@ -1,4 +1,4 @@
-use crate::models::{Order, Portfolio, User};
+use crate::models::Portfolio;
 use crate::AppState;
 use axum::{
     extract::{Path, State},

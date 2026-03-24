@@ -61,7 +61,7 @@ async fn main() {
         .route("/health", get(|| async { "OK" }))
         .route("/ws", get(routes::ws::ws_handler))
         .route("/api/users", post(routes::api::create_user))
-        .route("/api/users/:user_id/portfolio", get(routes::api::get_portfolio))
+        .route("/api/users/{user_id}/portfolio", get(routes::api::get_portfolio))
         .route("/api/orders", post(routes::api::create_order))
         .layer(cors)
         .with_state(state);
