@@ -3,13 +3,6 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct User {
-    pub id: Uuid,
-    pub username: String,
-    pub created_at: Option<DateTime<Utc>>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
 #[derive(sqlx::FromRow)]
 pub struct Portfolio {
     pub id: Uuid,
@@ -33,10 +26,4 @@ pub struct Order {
     pub status: String,
     pub created_at: Option<DateTime<Utc>>,
     pub updated_at: Option<DateTime<Utc>>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct TickerData {
-    pub symbol: String,
-    pub price: f64,
 }

@@ -1,5 +1,5 @@
 use dashmap::DashMap;
-use futures_util::{StreamExt, SinkExt};
+use futures_util::StreamExt;
 use serde::Deserialize;
 use std::sync::Arc;
 use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};

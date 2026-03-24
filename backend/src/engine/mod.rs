@@ -1,7 +1,6 @@
 use crate::models::Order;
 use crate::AppState;
-use sqlx::{PgPool, Row};
-use std::sync::Arc;
+
 use tokio::time::{interval, Duration};
 use tracing::{error, info};
 

@@ -1,11 +1,6 @@
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::env;
-use std::sync::Arc;
 
-#[derive(Clone)]
-pub struct AppState {
-    pub db: Arc<PgPool>,
-}
 
 pub async fn init_db() -> PgPool {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
