@@ -12,7 +12,7 @@ pub async fn init_db() -> PgPool {
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
-        .connect(&database_url)
+        .connect(&format!("{}?sslmode=require", database_url))
         .await
         .expect("Failed to create pool");
 
