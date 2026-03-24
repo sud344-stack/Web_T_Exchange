@@ -1,3 +1,3 @@
 #!/bin/bash
 cd frontend && npm run build
-cd ../backend && cargo run --release
+cd ../backend && ./target/release/backend
